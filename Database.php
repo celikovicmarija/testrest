@@ -98,6 +98,7 @@ class Database
         $q = "DELETE FROM $table WHERE $table.$id=$id_value";
         // echo $q;
         if($this->ExecuteQuery($q)){
+            echo "Yay";
             return true;
         }else{
             return false;
