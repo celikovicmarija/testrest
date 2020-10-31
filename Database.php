@@ -33,11 +33,13 @@ class Database
         if($this->result){
             if(isset($this->result->num_rows)){
                 $this->records = $this->result->num_rows;
+               
             }
             if(isset($this->result->affected_rows)){
                 $this->affected = $this->result->affected_rows;
-
+                echo $this->affected;
             }
+
             return true;
         }else{
             return false;
@@ -51,9 +53,11 @@ class Database
     function select($table="novosti",$rows="*",$join_table="kategorije",$join_key1="kategorija_id",$join_key2="id", $where =null, $order=null){
         $q = 'SELECT '.$rows.' FROM '.$table;
         //SELECT * FROM novosti
+        echo $q;
         if($join_table!=null){
             $q.=' JOIN '.$join_table.' ON '.$table.'.'.$join_key1.'='.$join_table.'.'.$join_key2;
             //SELECT * FROM novosti JOIN kategorije ON novosti.kategorija_id = kategorije.id
+            
         }
         if($where!=null){
             $q.=' WHERE '.$where;
@@ -61,8 +65,13 @@ class Database
         if($order!=null){
             $q.=' ORDER BY '.$order;
         }
-
-        $this->ExecuteQuery($q);
+        if( $this->ExecuteQuery($q)){         
+            return true;
+        }
+        else{
+            return false;
+        }
+       
     }
     function insert($table="novosti",$rows="naslov, tekst, datumvreme, kategorija_id", $values){
         $query_values = implode(',',$values);
@@ -72,9 +81,9 @@ class Database
             $q.='('.$rows.')';
         }
         $q.=" VALUES($query_values)";
-        // echo($q);
         if($this->ExecuteQuery($q)){
             return true;
+           
         }else{
             return false;
         }
@@ -86,8 +95,13 @@ class Database
             $set_query[] = "$keys[$i] = $values[$i]";
         }
         $query_values = implode(",", $set_query);  
+        echo $query_values;
+        echo "<br>";
         $q = "UPDATE $table SET $query_values WHERE id=$id";
-        if($this->ExecuteQuery($q) && $this->affected>0){
+       // echo ($q);
+       // update ne radi za kategorije kada stoji && $this->affected>0
+        if($this->ExecuteQuery($q)){
+
             return true;
         }else{
             return false;
